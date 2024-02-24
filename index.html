@@ -1,12 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hi</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Visualizer</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    canvas {
+      border: 1px solid #888;
+      background-color: #333;
+      cursor: pointer;
+    }
+    .buttons {
+      display: flex;
+      margin-top: 20px;
+    }
+    button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #666;
+    }
+  </style>
 </head>
 <body>
-    fdferiee
-    <h1>this is my first file</h1>
+  <div class="container">
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <div class="buttons">
+      <button id="addVertexBtn">Add Vertex</button>
+      <button id="addEdgeBtn">Add Edge</button>
+      <button id="bfsBtn">BFS Traversal</button>
+    </div>
+  </div>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const addVertexBtn = document.getElementById('addVertexBtn');
+    let vertices = [];
+
+    function drawVertex(x, y) {
+      context.beginPath();
+      context.arc(x, y, 10, 0, Math.PI * 2);
+      context.fillStyle = '#fff';
+      context.fill();
+      context.strokeStyle = '#fff';
+      context.stroke();
+    }
+
+    function clearCanvas() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function addVertex(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      vertices.push({ x, y });
+      drawVertex(x, y);
+    }
+
+    addVertexBtn.addEventListener('click', () => {
+      canvas.addEventListener('click', addVertex, { once: true });
+    });
+
+    canvas.addEventListener('click', () => {
+      clearCanvas();
+      vertices.forEach(vertex => {
+        drawVertex(vertex.x, vertex.y);
+      });
+    });
+  </script>""
 </body>
 </html>

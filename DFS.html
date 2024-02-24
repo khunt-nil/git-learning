@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Traversal</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .buttons {
+      display: flex;
+      margin-top: 20px;
+    }
+    button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #666;
+    }
+    #canvas {
+      border: 1px solid #888;
+      background-color: #333;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="buttons">
+      <button id="addVertexBtn">Add Vertex</button>
+      <button id="addEdgeBtn">Add Edge</button>
+      <button id="dfsBtn">DFS Traversal</button>
+    </div>
+    <canvas id="canvas" width="600" height="400"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const addVertexBtn = document.getElementById('addVertexBtn');
+    const addEdgeBtn = document.getElementById('addEdgeBtn');
+    const dfsBtn = document.getElementById('dfsBtn');
+    let vertices = [];
+    let edges = [];
+    let isAddingVertex = false;
+    let isAddingEdge = false;
+
+    function drawVertex(x, y) {
+      context.beginPath();
+      context.arc(x, y, 10, 0, Math.PI * 2);
+      context.fillStyle = '#fff';
+      context.fill();
+      context.strokeStyle = '#fff';
+      context.stroke();
+    }
+
+    function drawEdge(startX, startY, endX, endY) {
+      context.beginPath();
+      context.moveTo(startX, startY);
+      context.lineTo(endX, endY);
+      context.strokeStyle = '#fff';
+      context.stroke();
+    }
+
+    function addVertex(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      vertices.push({ x, y });
+      drawVertex(x, y);
+      isAddingVertex = false;
+    }
+
+    function addEdge(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      if (edges.length === 0) {
+        edges.push({ startX: x, startY: y });
+      } else {
+        const { startX, startY } = edges.pop();
+        edges.push({ startX, startY, endX: x, endY: y });
+        drawEdge(startX, startY, x, y);
+      }
+      isAddingEdge = false;
+    }
+
+    function dfsUtil(vertex, visited) {
+      visited[vertex] = true;
+      console.log(vertex);
+
+      for (let i = 0; i < edges.length; i++) {
+        if (edges[i].startX === vertices[vertex].x && edges[i].startY === vertices[vertex].y) {
+          const endVertex = vertices.findIndex(v => v.x === edges[i].endX && v.y === edges[i].endY);
+          if (!visited[endVertex]) {
+            dfsUtil(endVertex, visited);
+          }
+        }
+      }
+    }
+
+    function dfsTraversal() {
+      const visited = new Array(vertices.length).fill(false);
+      for (let i = 0; i < vertices.length; i++) {
+        if (!visited[i]) {
+          dfsUtil(i, visited);
+        }
+      }
+    }
+
+    addVertexBtn.addEventListener('click', () => {
+      isAddingVertex = true;
+    });
+
+    addEdgeBtn.addEventListener('click', () => {
+      isAddingEdge = true;
+    });
+
+    dfsBtn.addEventListener('click', () => {
+      dfsTraversal();
+    });
+
+    canvas.addEventListener('click', (event) => {
+      if (isAddingVertex) {
+        addVertex(event);
+      } else if (isAddingEdge) {
+        addEdge(event);
+      }
+    });
+  </script>
+</body>
+</html>
